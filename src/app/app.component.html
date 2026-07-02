@@ -1,47 +1,55 @@
-<main>
-  <h1>Snip</h1>
+<div class="page">
+  <section class="hero">
+    <h1 class="hero-title">Snip</h1>
+    <p class="hero-sub">Paste a URL. Get a short link. Instantly.</p>
 
-  <form (submit)="onSubmit($event)">
-    <input
-      type="url"
-      placeholder="https://example.com/long/url"
-      [value]="url()"
-      (input)="setUrl($event)"
-      autocomplete="off"
-    />
-    <button type="submit" [disabled]="!valid() || submitting()">
-      {{ submitting() ? 'Shortening\u2026' : 'Shorten' }}
-    </button>
-  </form>
+    <form class="shorten-form" (submit)="onSubmit($event)">
+      <input
+        class="url-input"
+        type="url"
+        placeholder="Paste any URL to shorten…"
+        [value]="url()"
+        (input)="setUrl($event)"
+        autocomplete="off"
+      />
+      <button class="shorten-btn" type="submit" [disabled]="!valid() || submitting()">
+        {{ submitting() ? '…' : 'Shorten' }}
+      </button>
+    </form>
 
-  @if (error()) {
-    <p class="error">{{ error() }}</p>
-  }
+    @if (error()) {
+      <div class="notice notice--error">{{ error() }}</div>
+    }
 
-  @if (created(); as link) {
-    <div class="result">
-      Short link: <a [href]="link.shortUrl" target="_blank">{{ link.shortUrl }}</a>
-    </div>
-  }
+    @if (created(); as link) {
+      <div class="notice notice--success">
+        <span class="notice-label">Short link</span>
+        <a class="notice-link" [href]="link.shortUrl" target="_blank">{{ link.shortUrl }}</a>
+      </div>
+    }
+  </section>
 
   @if (links().length) {
-    <table>
-      <thead>
-        <tr>
-          <th>Code</th>
-          <th>Original URL</th>
-          <th>Hits</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (link of links(); track link.code) {
+    <section class="card links-card">
+      <h2 class="card-title">Your links</h2>
+      <table class="links-table">
+        <thead>
           <tr>
-            <td><a [href]="link.shortUrl" target="_blank">{{ link.code }}</a></td>
-            <td class="original"><a [href]="link.url" target="_blank">{{ link.url }}</a></td>
-            <td>{{ link.hits }}</td>
+            <th>Code</th>
+            <th>Original URL</th>
+            <th>Hits</th>
           </tr>
-        }
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          @for (link of links(); track link.code) {
+            <tr>
+              <td><a class="link-code" [href]="link.shortUrl" target="_blank">{{ link.code }}</a></td>
+              <td class="original"><a [href]="link.url" target="_blank">{{ link.url }}</a></td>
+              <td class="hits">{{ link.hits }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
   }
-</main>
+</div>
