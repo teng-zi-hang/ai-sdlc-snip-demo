@@ -1,0 +1,8 @@
+{
+  "name": "snip-bundle",
+  "version": "1.0.0",
+  "description": "Snip — self-contained deployable bundle (server + SPA + CLI)",
+  "scripts": {
+    "start": "bun server.js"
+  }
+}
