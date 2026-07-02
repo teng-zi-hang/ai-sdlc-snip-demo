@@ -181,3 +181,41 @@ git push
 git pull
 git submodule update --init --recursive
 ```
+
+---
+
+## Bundle (deployable artefact)
+
+The `bundle` branch is **generated output** — do not edit by hand.
+It is assembled from the three source branches by `scripts/build-bundle.mjs`.
+
+```
+snip-demo/
+└── bundle/           ← submodule → origin/bundle  (generated)
+    ├── server.js     copied from backend/
+    ├── cli.js        copied from cli/
+    ├── public/       Angular SPA build output
+    ├── .env          PUBLIC_DIR=./public
+    ├── package.json  { "start": "bun server.js" }  (no "type" field)
+    ├── Dockerfile    FROM oven/bun:1-alpine
+    └── railway.json  DOCKERFILE builder
+```
+
+### Rebuild and push
+
+```sh
+# From the superproject root:
+node scripts/build-bundle.mjs          # build + commit locally (safe no-op if nothing changed)
+node scripts/build-bundle.mjs --push   # build + commit + push bundle branch + main
+```
+
+### Deploy
+
+```sh
+# Docker
+docker build -t snip bundle/
+docker run -p 3000:3000 snip
+# → http://localhost:3000  (serves API + Angular SPA)
+
+# Railway — push the bundle branch; railway.json selects the Dockerfile builder automatically
+```
