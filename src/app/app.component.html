@@ -1,0 +1,47 @@
+<main>
+  <h1>Snip</h1>
+
+  <form (submit)="onSubmit($event)">
+    <input
+      type="url"
+      placeholder="https://example.com/long/url"
+      [value]="url()"
+      (input)="setUrl($event)"
+      autocomplete="off"
+    />
+    <button type="submit" [disabled]="!valid() || submitting()">
+      {{ submitting() ? 'Shortening\u2026' : 'Shorten' }}
+    </button>
+  </form>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  @if (created(); as link) {
+    <div class="result">
+      Short link: <a [href]="link.shortUrl" target="_blank">{{ link.shortUrl }}</a>
+    </div>
+  }
+
+  @if (links().length) {
+    <table>
+      <thead>
+        <tr>
+          <th>Code</th>
+          <th>Original URL</th>
+          <th>Hits</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (link of links(); track link.code) {
+          <tr>
+            <td><a [href]="link.shortUrl" target="_blank">{{ link.code }}</a></td>
+            <td class="original"><a [href]="link.url" target="_blank">{{ link.url }}</a></td>
+            <td>{{ link.hits }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</main>
