@@ -138,13 +138,15 @@ run('git add -A', D.bundle);
 if (hasStagedChanges(D.bundle)) {
   const stamp = new Date().toISOString().slice(0, 16).replace('T', ' ');
   run(`git commit -m "chore: bundle ${stamp}"`, D.bundle);
-  if (PUSH) {
-    // Submodule is detached; push explicitly to the bundle branch
-    run('git push origin HEAD:bundle', D.bundle);
-    console.log('  ✓ pushed bundle branch');
-  }
 } else {
   console.log('  — nothing to commit in bundle/ (no-op)');
+}
+
+if (PUSH) {
+  // Submodule is in detached-HEAD state; push explicitly to the bundle branch.
+  // Safe even if origin already has the commit (idempotent).
+  run('git push origin HEAD:bundle', D.bundle);
+  console.log('  ✓ pushed bundle branch');
 }
 
 // ── 5. Bump superproject pointer ──────────────────────────────────────────────
@@ -154,12 +156,13 @@ run('git add bundle');
 
 if (hasStagedChanges(ROOT)) {
   run('git commit -m "chore: bump bundle"');
-  if (PUSH) {
-    run('git push');
-    console.log('  ✓ pushed main');
-  }
 } else {
   console.log('  — bundle pointer unchanged (no-op)');
+}
+
+if (PUSH) {
+  run('git push');
+  console.log('  ✓ pushed main');
 }
 
 console.log('\n  ✓ build-bundle complete\n');
